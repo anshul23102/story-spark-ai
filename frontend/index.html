@@ -43,30 +43,104 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-     <!-- Back to Top Button -->
-    <button id="back-to-top" aria-label="Back to top" title="Back to top">
-      &#8679;
-    </button>
-    
-      <!-- Back to Top Logic -->
-  <script>
-    (function () {
-      var btn = document.getElementById("back-to-top");
-      if (!btn) return;
+    <!-- Back to Top Button -->
+<style>
+  #back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.85);
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+    z-index: 9999;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    font-size: 0;
+  }
 
-      window.addEventListener("scroll", function () {
-        if (window.scrollY > 300) {
-          btn.classList.add("visible");
-        } else {
-          btn.classList.remove("visible");
-        }
-      });
+  #back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
 
-      btn.addEventListener("click", function () {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    })();
-  </script>
+  #back-to-top:hover {
+    transform: scale(1.1);
+  }
+</style>
+
+<button id="back-to-top" aria-label="Back to top" title="Back to top">
+  <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <!-- Background ring -->
+    <circle
+      cx="24" cy="24" r="20"
+      fill="none"
+      stroke="rgba(255,255,255,0.2)"
+      stroke-width="3"
+    />
+    <!-- Progress ring -->
+    <circle
+      id="progress-ring__circle"
+      cx="24" cy="24" r="20"
+      fill="none"
+      stroke="rgba(255,255,255,0.6)"
+      stroke-width="4.2"
+      stroke-linecap="round"
+      stroke-dasharray="125.66"
+      stroke-dashoffset="125.66"
+      transform="rotate(-90 24 24)"
+    />
+    <!-- Arrow up -->
+    <polyline
+      points="24,14 24,34"
+      stroke="rgba(255,255,255,0.9)"
+      stroke-width="5.8"
+      stroke-linecap="round"
+    />
+    <polyline
+      points="16,23 24,14 32,23"
+      stroke="rgba(255,255,255,0.9)"
+      stroke-width="5.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+  </svg>
+</button>
+
+<!-- Back to Top Logic -->
+<script>
+  (function () {
+    var btn = document.getElementById("back-to-top");
+    var circle = document.getElementById("progress-ring__circle");
+    if (!btn || !circle) return;
+
+    var circumference = 125.66;
+
+    window.addEventListener("scroll", function () {
+      var scrollTop = window.scrollY || document.documentElement.scrollTop;
+      var docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      var progress = docHeight > 0 ? scrollTop / docHeight : 0;
+      circle.style.strokeDashoffset = circumference - progress * circumference;
+
+      if (scrollTop > 300) {
+        btn.classList.add("visible");
+      } else {
+        btn.classList.remove("visible");
+      }
+    });
+
+    btn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  })();
+</script>
   
   </body>
 </html>
