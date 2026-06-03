@@ -1,22 +1,6 @@
 import { useState, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
-import {
-  Sparkles,
-  Compass,
-  PenSquare,
-  BarChart3,
-  Users,
-  Trophy,
-  Phone,
-  Bell,
-  Moon,
-  Sun,
-  Menu,
-  X,
-  HelpCircle,
-} from "lucide-react";
-
 import logo from "../../assets/logo.png";
 
 const NavListComponent = () => {
@@ -24,278 +8,233 @@ const NavListComponent = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Dummy states
+  // Dummy states (replace with actual logic later if needed)
   const isLogin = false;
+  const isAdmin = false;
 
   const notificationMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const unreadCount = 3;
+  const notifications: unknown[] = [];
+  const unreadCount = 0;
+  const isOpen = false;
 
   const toggle = () => {};
+  const close = () => {};
+  const markAsRead = () => {};
+
   const handelLogout = () => {
     console.log("logout");
   };
 
   const getLinkClass = (isActive: boolean) =>
-    `group relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-semibold tracking-wide transition-all duration-300 ${
+    `inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-300 ${
       isActive
-        ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-white shadow-[0_0_20px_rgba(59,130,246,0.18)]"
-        : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+        ? "bg-blue-500/15 text-blue-400"
+        : "text-slate-600 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
     }`;
 
   const getMobileLinkClass = (isActive: boolean) =>
-    `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-300 ${
+    `flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 ${
       isActive
-        ? "bg-blue-500/15 text-blue-400 border border-blue-500/20"
-        : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
+        ? "bg-blue-500/15 text-blue-400"
+        : "text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-white/5"
     }`;
 
-  const navLinks = [
-    {
-      label: "HOME",
-      path: "/",
-      icon: Sparkles,
-    },
-    {
-      label: "EXPLORE",
-      path: "/explore",
-      icon: Compass,
-    },
-    {
-      label: "INSPIRING",
-      path: "/story-inspiration",
-      icon: PenSquare,
-    },
-    {
-      label: "ANALYTICS",
-      path: "/dashboard/analytics",
-      icon: BarChart3,
-    },
-    {
-      label: "COLLAB",
-      path: "/collab",
-      icon: Users,
-    },
-    {
-      label: "LEADERBOARD",
-      path: "/leaderboard",
-      icon: Trophy,
-    },
-    {
-      label: "CONTACT",
-      path: "/contact-us",
-      icon: Phone,
-    },
-  ];
+  const renderMobileNavContent = (
+    label: string,
+    isActive: boolean
+  ) => (
+    <div className="flex items-center gap-2">
+      {isActive && (
+        <span className="h-2 w-2 rounded-full bg-blue-500" />
+      )}
+      {label}
+    </div>
+  );
+
+  const ThemeToggle = () => (
+    <button className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white">
+      🌙
+    </button>
+  );
+
+  const NotificationComponent = () => null;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#020617]/80 backdrop-blur-2xl">
-      {/* Premium top glow */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />
+    <header className="sticky top-0 z-50 w-full bg-white/90 supports-[backdrop-filter]:bg-white/75 dark:bg-[#0B1120]/80 dark:supports-[backdrop-filter]:bg-[#0B1120]/70 backdrop-blur-md border-b border-slate-200/70 dark:border-white/10 transition-colors duration-300 transform-gpu">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between w-full gap-2">
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-[78px] items-center justify-between gap-4">
-
-          {/* LEFT */}
-          <div className="flex items-center gap-10">
-
-            {/* Logo */}
-            <Link
-              to="/"
-              className="group relative flex items-center"
-            >
-              <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-2xl opacity-0 transition duration-500 group-hover:opacity-100" />
-
+          {/* Logo */}
+          <div className="flex items-center shrink-0">
+            <Link to="/">
               <img
                 src={logo}
-                alt="StorySpark AI"
-                className="relative h-10 w-auto object-contain transition duration-300 group-hover:scale-105"
+                alt="logo"
+                className="h-9 w-auto object-contain"
               />
             </Link>
-
-            {/* Desktop Nav */}
-            <nav className="hidden xl:flex items-center gap-2">
-              {navLinks.map((item) => (
-                <NavLink
-                  key={item.label}
-                  to={item.path}
-                  end={item.path === "/"}
-                  className={({ isActive }) =>
-                    getLinkClass(isActive)
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <item.icon
-                        size={15}
-                        className={`transition ${
-                          isActive
-                            ? "text-blue-400"
-                            : "text-slate-500 group-hover:text-blue-400"
-                        }`}
-                      />
-
-                      <span>{item.label}</span>
-
-                      {/* active indicator */}
-                      {isActive && (
-                        <span className="absolute inset-x-3 -bottom-[6px] h-[2px] rounded-full bg-gradient-to-r from-blue-400 to-indigo-400" />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </nav>
           </div>
 
-          {/* RIGHT */}
-          <div className="flex items-center gap-2">
+          {/* Desktop Navigation */}
+          <nav className="hidden xl:flex flex-1 items-center justify-center gap-1 px-2">
 
-            {/* Desktop Actions */}
-            <div className="hidden xl:flex items-center gap-2">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              HOME
+            </NavLink>
 
-              {/* Help */}
+            <NavLink
+              to="/explore"
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              EXPLORE
+            </NavLink>
+
+            <NavLink
+              to="/story-inspiration"
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              INSPIRING
+            </NavLink>
+
+            <NavLink
+              to="/analytics"
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              ANALYTICS
+            </NavLink>
+
+            <NavLink
+              to="/collab"
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              COLLAB
+            </NavLink>
+
+            <NavLink
+              to="/contact-us"
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              CONTACT
+            </NavLink>
+
+            <NavLink
+              to="/community"
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              COMMUNITY
+            </NavLink>
+
+          </nav>
+
+          {/* Right Side */}
+          <div className="flex items-center gap-2 shrink-0">
+
+            <div className="hidden xl:flex items-center gap-1.5">
+
               <button
                 type="button"
-                aria-label="Help Center"
+                aria-label="Open Help Center"
                 onClick={() => navigate("/help-center")}
-                className="group inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-400 transition-all duration-300 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 dark:text-slate-400 transition-all duration-300 hover:bg-slate-200/60 hover:text-slate-900 dark:hover:bg-white/5 dark:hover:text-white"
               >
-                <HelpCircle
-                  size={18}
-                  className="transition-transform duration-300 group-hover:rotate-12"
-                />
+                ?
               </button>
 
-              {/* Notifications */}
+              {isLogin ? (
+                <button
+                  onClick={handelLogout}
+                  className="inline-flex h-9 items-center justify-center rounded-md px-3 text-xs font-semibold text-slate-600 transition-all duration-300 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
+                >
+                  LOGOUT
+                </button>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <button className="inline-flex h-9 items-center justify-center rounded-md px-3 text-xs font-semibold text-slate-600 transition-all duration-300 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white">
+                      LOGIN
+                    </button>
+                  </Link>
+
+                  <Link to="/signup">
+                    <button className="inline-flex h-9 items-center justify-center rounded-md px-3 text-xs font-semibold text-slate-600 transition-all duration-300 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white">
+                      SIGN UP
+                    </button>
+                  </Link>
+                </>
+              )}
+
+              <ThemeToggle />
+
               <div
-                className="relative"
+                className="relative inline-flex"
                 ref={notificationMenuRef}
               >
                 <button
                   type="button"
                   aria-label="Notifications"
+                  className="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition-all duration-300 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
                   onClick={toggle}
-                  className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-400 transition-all duration-300 hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400"
                 >
-                  <Bell
-                    size={18}
-                    className="transition-transform duration-300 group-hover:rotate-12"
-                  />
+                  🔔
 
                   {unreadCount > 0 && (
-                    <>
-                      <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
-
-                      <span className="absolute right-0 top-0 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-lg shadow-rose-500/30">
-                        {unreadCount}
-                      </span>
-                    </>
+                    <span className="absolute right-0 top-0 grid min-h-[18px] min-w-[18px] -translate-y-1/2 translate-x-1/2 place-items-center rounded-full bg-rose-500 px-1 text-[11px] font-semibold text-white">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
                   )}
                 </button>
               </div>
-
-              {/* Theme */}
-              <button className="group inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-400 transition-all duration-300 hover:border-yellow-500/30 hover:bg-yellow-500/10 hover:text-yellow-300">
-                <Moon
-                  size={18}
-                  className="transition-transform duration-500 group-hover:rotate-12"
-                />
-              </button>
-
-              {/* Auth Buttons */}
-              {isLogin ? (
-                <button
-                  onClick={handelLogout}
-                  className="ml-2 inline-flex h-10 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 px-5 text-sm font-semibold text-red-300 transition-all duration-300 hover:bg-red-500/20"
-                >
-                  Logout
-                </button>
-              ) : (
-                <div className="ml-2 flex items-center gap-2">
-
-                  <Link to="/login">
-                    <button className="inline-flex h-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-5 text-sm font-semibold text-slate-300 transition-all duration-300 hover:border-blue-500/20 hover:bg-blue-500/10 hover:text-white">
-                      Login
-                    </button>
-                  </Link>
-
-                  <Link to="/signup">
-                    <button className="inline-flex h-10 items-center justify-center rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 px-5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:scale-[1.03] hover:shadow-blue-500/40">
-                      Sign Up
-                    </button>
-                  </Link>
-                </div>
-              )}
             </div>
 
-            {/* Mobile Menu */}
-            <button
-              type="button"
-              aria-label={menuOpen ? "Close Menu" : "Open Menu"}
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300"
-            >
-              {menuOpen ? (
-                <X size={20} />
-              ) : (
-                <Menu size={20} />
-              )}
-            </button>
+            {/* Mobile Actions */}
+            <div className="flex xl:hidden items-center gap-1.5">
+
+              <ThemeToggle />
+
+              <button
+                type="button"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((prev) => !prev)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-600 dark:text-slate-400 transition-all duration-300 hover:bg-slate-200/60 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+              >
+                {menuOpen ? "✕" : "☰"}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* MOBILE MENU */}
+        <NotificationComponent />
+
+        {/* Mobile Menu */}
         {menuOpen && (
-          <div className="xl:hidden pb-5 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="xl:hidden mt-2 px-1 pb-4 flex flex-col gap-1.5 border-t border-slate-200/70 dark:border-white/10 pt-3">
 
-            <div className="mt-2 rounded-3xl border border-white/10 bg-white/[0.03] p-3 backdrop-blur-2xl">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) => getMobileLinkClass(isActive)}
+              onClick={() => setMenuOpen(false)}
+            >
+              {({ isActive }) =>
+                renderMobileNavContent("HOME", isActive)
+              }
+            </NavLink>
 
-              <div className="flex flex-col gap-2">
-
-                {navLinks.map((item) => (
-                  <NavLink
-                    key={item.label}
-                    to={item.path}
-                    end={item.path === "/"}
-                    className={({ isActive }) =>
-                      getMobileLinkClass(isActive)
-                    }
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <item.icon
-                          size={17}
-                          className={
-                            isActive
-                              ? "text-blue-400"
-                              : "text-slate-500"
-                          }
-                        />
-
-                        <span>{item.label}</span>
-                      </>
-                    )}
-                  </NavLink>
-                ))}
-
-                <div className="mt-3 grid grid-cols-2 gap-2">
-
-                  <Link to="/login">
-                    <button className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 text-sm font-semibold text-slate-300">
-                      Login
-                    </button>
-                  </Link>
-
-                  <Link to="/signup">
-                    <button className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 py-3 text-sm font-semibold text-white">
-                      Sign Up
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <NavLink
+              to="/explore"
+              className={({ isActive }) => getMobileLinkClass(isActive)}
+              onClick={() => setMenuOpen(false)}
+            >
+              {({ isActive }) =>
+                renderMobileNavContent("EXPLORE", isActive)
+              }
+            </NavLink>
           </div>
         )}
       </div>
