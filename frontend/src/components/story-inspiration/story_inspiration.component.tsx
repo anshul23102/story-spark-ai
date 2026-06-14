@@ -201,7 +201,7 @@ const StoryInspirationComponent: React.FC = () => {
             {[
               { value: inspirationData.length, label: "Story Inspirations", icon: "fa-book-open" },
               { value: genres.length - 1, label: "Creative Genres", icon: "fa-layer-group" },
-              { value: "∞", label: "Writing Possibilities", icon: "fa-sparkles" },
+              { value: "∞", label: "Writing Possibilities", icon: "fa-infinity" },
             ].map((item, index) => (
               <motion.div
                 key={index}
