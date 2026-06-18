@@ -120,6 +120,7 @@ jobs:
               } catch (err) {
                 core.warning(`Could not post/update comment: ${err.message}`);
               }
+
             } else if (pr.mergeable === true) {
               core.info('PR is mergeable. Cleaning up conflict labels and comments if present...');
 

@@ -17,10 +17,10 @@ interface IRegisterInfo {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 interface Inputs extends IRegisterInfo {
-  confirmPassword: string;
   otp: string;
 }
 
@@ -106,9 +106,17 @@ const SignUpComponent = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (data) {
-      const user = { name: data.name, email: data.email, password: data.password };
-      const otpPayload = { name: data.name, email: data.email };
+const user = {
+  name: data.name,
+  email: data.email,
+  password: data.password,
+  confirmPassword: data.confirmPassword,
+};
 
+const otpPayload = {
+  name: data.name,
+  email: data.email,
+};
       if (password !== confirmPassword) {
         toast.error("Passwords do not match!");
         return;
@@ -189,8 +197,8 @@ const SignUpComponent = () => {
       if (res?.data) {
         const { expiresAt } = res.data;
         setExpiredAt(new Date(expiresAt).getTime());
-        toast.success("OTP resent successfully!");
         setValue("otp", "");
+        toast.success("OTP resent to your email");
         setCooldown(60);
       }
     } catch (error: unknown) {
@@ -226,6 +234,56 @@ const SignUpComponent = () => {
     }
   };
 
+  const handleResendOtp = async () => {
+    if (cooldown > 0 || isBusy) return;
+    if (!registerInfo) {
+      toast.error("Something went wrong. Please restart the process.");
+      return;
+    }
+    setIsBusy(true);
+    try {
+      const otpPayload = {
+        name: registerInfo.name,
+        email: registerInfo.email,
+      };
+      const res = await emailVerify({ ...otpPayload }).unwrap();
+      if (res?.data) {
+        const { expiresAt } = res.data;
+        setExpiredAt(new Date(expiresAt).getTime());
+        toast.success("OTP resent successfully!");
+        setValue("otp", "");
+        setCooldown(60);
+      }
+    } catch (error) {
+      const message =
+        (error as { data?: Array<{ message?: string }> })?.data?.[0]?.message ||
+        "Failed to resend OTP. Please try again.";
+      toast.error(message);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleGoogleLoginSuccess = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    setIsBusy(true);
+    try {
+      const res = await googleLogin({
+        token: credentialResponse.credential,
+      }).unwrap();
+      if (res.data.accessToken) {
+        toast.success("User logged in successfully with Google!");
+        storeUserInfo({ accessToken: res.data.accessToken });
+        navigate("/");
+      }
+    } catch {
+      toast.error("Failed to login with Google. Please try again.");
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleGoogleLoginError = () => {
     toast.error("Google login failed. Please try again.");
   };
@@ -242,7 +300,6 @@ const SignUpComponent = () => {
       setValue("confirmPassword", registerInfo.password);
     }
   }, [showOtpField, registerInfo, setValue]);
-
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-8 sm:py-12 relative overflow-x-hidden text-slate-900 dark:text-slate-100 box-border">
 
@@ -259,10 +316,23 @@ const SignUpComponent = () => {
           </h2>
         </div>
 
+
+        {/* UPDATED: Structured layout classes to lock down maximum inner boundary constraints */}
+        <div className="bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-5 sm:p-8 shadow-2xl w-full min-w-0 overflow-hidden box-border">
+
+        <Link
+  to="/"
+  className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:text-blue-400"
+>
+  <span>←</span>
+  <span>Back to Home</span>
+</Link>
+          <h3 className="text-center text-xl sm:text-2xl font-bold tracking-tight text-slate-200">
         {/* Card */}
         <div className="bg-white dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-5 sm:p-8 shadow-2xl w-full min-w-0 overflow-hidden box-border">
 
           <h3 className="text-center text-xl sm:text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-200">
+
             {showOtpField ? "Verify Your Email" : "Create Account"}
           </h3>
           {showOtpField && registerInfo && (
@@ -362,8 +432,6 @@ const SignUpComponent = () => {
                     {PASSWORD_REQUIREMENTS.map(({ key, label }) => {
                       const met = passwordChecks[key];
                       return (
-                        <li key={key} className={`flex items-center gap-2 ${met ? "text-emerald-400" : "text-slate-500"}`}>
-                          <i className={`fa-solid ${met ? "fa-circle-check" : "fa-circle-xmark"} text-xs shrink-0`} aria-hidden="true" />
                           <span>{label}</span>
                         </li>
                       );
@@ -409,6 +477,7 @@ const SignUpComponent = () => {
                   validation={{
                     required: "Please enter OTP",
                     minLength: { value: 6, message: "OTP must be 6 digits" },
+                      setValueAs: (value: string) => value.replace(/\D/g, ""),
                     maxLength: { value: 6, message: "OTP must be 6 digits" },
                     pattern: { value: /^[0-9]{6}$/, message: "OTP must contain only numbers" },
                   }}
