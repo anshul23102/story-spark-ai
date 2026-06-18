@@ -65,8 +65,7 @@ export const raceGenerationWithTimeout = async <T>(
           controller.abort();
           reject(error);
         }
+        reject(error);
       });
   });
 };
-
-
