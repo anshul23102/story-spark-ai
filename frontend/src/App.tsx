@@ -56,7 +56,12 @@ const PublishedStoriesComponent = lazy(() => import("./components/dashboard/post
 const AnalyticsPage = lazy(() => import("./components/dashboard/analytics/analytics.page"));
 const PostListsComponent = lazy(() => import("./components/dashboard/posts/post_lists.component"));
 const EmailValidationComponent = lazy(() => import("./components/email_validation/email.validation.component"));
-const PaymentComponent = lazy(() => import("./components/home/pricing/payment.component"));
+const PaymentComponent = lazy(() =>
+  import("./components/home/pricing/payment.component").then((module) => ({
+    default: module.PaymentComponent,
+  }))
+);
+const SearchPageComponent = lazy(() => import("./pages/SearchPage"));
 
 const ALL_ROLES = [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.WRITER, USER_ROLE.USER];
 const ELEVATED_ADMIN_ROLES = [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN];
@@ -99,21 +104,19 @@ const router = createBrowserRouter([
       { path: "contributors", element: <ContributorsComponent /> },
       { path: "community", element: <CommunityComponent /> },
       { path: "report-bug", element: <ReportBug /> },
-      // Public routes
-{ path: "explore", element: lazyPage(<ExploreComponent />) },
-{ path: "resources", element: <ResourcesListComponent /> },
-{ path: "resources/:resourceName", element: <ResourceDetailComponent /> },
-
-// Protected routes
-{
-  element: <ProtectedRoute allowedRoles={ALL_ROLES} />,
-  children: [
-    { path: "bookmarks", element: <BookmarksComponent /> },
-    { path: "stories", element: <StoriesComponent /> },
-    { path: "branching-story", element: <BranchingStory /> },
-    { path: "story-workspace", element: <StoryWorkspace /> },
-  ],
-},
+      { path: "search", element: lazyPage(<SearchPageComponent />) },
+      {
+        element: <ProtectedRoute allowedRoles={ALL_ROLES} />,
+        children: [
+          { path: "explore", element: <ExploreComponent /> },
+          { path: "bookmarks", element: <BookmarksComponent /> },
+          { path: "resources", element: <ResourcesListComponent /> },
+          { path: "resources/:resourceName", element: <ResourceDetailComponent /> },
+          { path: "stories", element: <StoriesComponent /> },
+          { path: "branching-story", element: <BranchingStory /> },
+          { path: "story-workspace", element: <StoryWorkspace /> },
+        ],
+      },
       { path: "*", element: <NotFoundComponent /> },
     ],
   },
@@ -242,4 +245,5 @@ function App() {
   return <RouterProvider router={router} />;
 }
 
+export default App;
 export default App;
