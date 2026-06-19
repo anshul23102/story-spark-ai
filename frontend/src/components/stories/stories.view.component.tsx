@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useCreatePostMutation, useDeletePostMutation } from "../../redux/apis/post.api";
 import { useGetProfileInfoQuery } from "../../redux/apis/user.api";
 import StoryAchievementDashboard from "./StoryAchievementDashboard";
+import StoryCollections from "./StoryCollections";
 import jsPDF from "jspdf";
 import {
   fetchImageAsBlob,
@@ -2207,6 +2208,11 @@ const handleGenerateCharacterProfile = async () => {
                 });
               }
             }}
+          />
+
+          <StoryCollections
+            storyId={selectedStory.uuid}
+            storyTitle={selectedStory.title}
           />
 
           <div className="mb-5">
