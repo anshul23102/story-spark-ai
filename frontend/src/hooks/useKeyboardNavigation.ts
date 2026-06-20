@@ -1,5 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { keyboardShortcuts } from '../utils/accessibility';
+
+const keyboardShortcuts = {
+  isEnterKey: (event: KeyboardEvent) => event.key === 'Enter',
+  isEscapeKey: (event: KeyboardEvent) => event.key === 'Escape',
+  isSpaceKey: (event: KeyboardEvent) => event.key === ' ',
+};
 
 interface UseKeyboardNavigationOptions {
   onEnter?: (e: KeyboardEvent) => void;
@@ -16,32 +21,20 @@ export const useKeyboardNavigation = (options: UseKeyboardNavigationOptions) => 
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (keyboardShortcuts.isEnterKey(e)) {
-        options.onEnter?.(e);
-      } else if (keyboardShortcuts.isEscapeKey(e)) {
-        options.onEscape?.(e);
-      } else if (e.key === 'ArrowUp') {
-        options.onArrowUp?.(e);
-      } else if (e.key === 'ArrowDown') {
-        options.onArrowDown?.(e);
-      } else if (e.key === 'ArrowLeft') {
-        options.onArrowLeft?.(e);
-      } else if (e.key === 'ArrowRight') {
-        options.onArrowRight?.(e);
-      } else if (keyboardShortcuts.isSpaceKey(e)) {
-        options.onSpace?.(e);
-      }
+      if (keyboardShortcuts.isEnterKey(e)) options.onEnter?.(e);
+      else if (keyboardShortcuts.isEscapeKey(e)) options.onEscape?.(e);
+      else if (e.key === 'ArrowUp') options.onArrowUp?.(e);
+      else if (e.key === 'ArrowDown') options.onArrowDown?.(e);
+      else if (e.key === 'ArrowLeft') options.onArrowLeft?.(e);
+      else if (e.key === 'ArrowRight') options.onArrowRight?.(e);
+      else if (keyboardShortcuts.isSpaceKey(e)) options.onSpace?.(e);
     };
 
     const container = containerRef.current;
-    if (container) {
-      container.addEventListener('keydown', handleKeyDown);
-    }
+    if (container) container.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      if (container) {
-        container.removeEventListener('keydown', handleKeyDown);
-      }
+      if (container) container.removeEventListener('keydown', handleKeyDown);
     };
   }, [options]);
 
