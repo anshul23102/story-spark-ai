@@ -120,15 +120,13 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, setRating }) => {
             />
 
             {/* right half (full star) */}
-            <button
-              type="button"
-              aria-label={`Rate ${star} star`}
-              onMouseEnter={() => setHovered(star)}
-              onClick={() => handleClick(star)}
-              className="absolute right-0 top-0 h-full w-1/2 bg-transparent"
-            />
-          </div>
-        ))}
+        const StarRating = ({
+          rating,
+          setRating,
+        }: {
+          rating: number;
+          setRating: (n: number) => void;
+        }) => {
       </div>
 
       {(hovered || rating) > 0 && (
@@ -482,10 +480,6 @@ const ReviewForm: React.FC = () => {
           </div>
         </form>
       </div>
-    </div>
-  
-</div>
-  );
     </div>
   );
 };
