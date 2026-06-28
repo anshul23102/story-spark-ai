@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Security middleware to prevent prompt injection and jailbreaks.
  * Improvements:
  * - Input normalization before pattern matching
@@ -50,6 +50,18 @@ const FORBIDDEN_PATTERNS: RegExp[] = [
  * Normalize input to prevent Unicode substitution and obfuscation bypasses.
  */
 const normalizeInput = (input: string): string => {
+  return input
+    .normalize("NFKC") // Unicode normalization
+    .replace(/[\u200B-\u200D\uFEFF]/g, "") // Remove zero-width characters
+    .replace(/\s+/g, " ") // Collapse whitespace
+    .trim();
+};
+/**
+ * Strip markdown code fences (e.g. ```json ... ```) from raw AI text
+ * before attempting JSON.parse.
+ */
+export const sanitizeJsonText = (rawText: string): string => {
+  const trimmed = rawText.trim();
   return (input ?? "")
     .normalize("NFKC")
     .replace(/\u200B|\u200C|\u200D|\uFEFF|\u2060|\u180E/g, "")
