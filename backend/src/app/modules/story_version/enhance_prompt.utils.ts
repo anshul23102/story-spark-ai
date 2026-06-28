@@ -1,3 +1,6 @@
+ fix/story-parser-locations-1035
+// backend/src/app/modules/story_version/enhance_prompt.utils.ts
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   GEMINI_MODEL,
@@ -6,8 +9,21 @@ import {
   getOpenAIClient,
   getAnthropicClient,
 } from "../../../services/ai.service";
+ main
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+export const enhancePrompt = (prompt: string, context?: string): string => {
+  // Use the following story context if available
+  const compressedContext = context ? context : "No previous context";
+
+ fix/story-parser-locations-1035
+  const metaPrompt = `You are a creative writing assistant. Rewrite the following story prompt to be more vivid, specific, and engaging. Add a character name, setting details, and a central conflict. Return ONLY the enhanced prompt, nothing else. Do not add any explanation or prefix.
+
+Context: ${compressedContext}
+
+Prompt: ${prompt}`;
+
+  return metaPrompt;
+};
 
 export const enhancePromptWithGemini = async (
   prompt: string,
@@ -53,9 +69,14 @@ export const enhancePromptWithOpenAI = async (
 ): Promise<string> => {
   const client = getOpenAIClient();
 
-  const metaPrompt = `You are a creative writing assistant. Rewrite the following story prompt to be more vivid, specific, and engaging. Add a character name, setting details, and a central conflict. Return ONLY the enhanced prompt, nothing else. Do not add any explanation or prefix.\n\nPrompt: ${prompt}`;
+  const metaPrompt = `You are a creative writing assistant.
 
+Rewrite the following story prompt to be more vivid, specific, and engaging.
+Add a character name, setting details, and a central conflict.
 
+Return ONLY the enhanced prompt, nothing else. Do not add any explanation or prefix.
+
+Prompt: ${prompt}`;
 
   const response = await client.chat.completions.create(
     {
@@ -81,9 +102,14 @@ export const enhancePromptWithAnthropic = async (
 ): Promise<string> => {
   const client = getAnthropicClient();
 
-  const metaPrompt = `You are a creative writing assistant. Rewrite the following story prompt to be more vivid, specific, and engaging. Add a character name, setting details, and a central conflict. Return ONLY the enhanced prompt, nothing else. Do not add any explanation or prefix.\n\nPrompt: ${prompt}`;
+  const metaPrompt = `You are a creative writing assistant.
 
+Rewrite the following story prompt to be more vivid, specific, and engaging.
+Add a character name, setting details, and a central conflict.
 
+Return ONLY the enhanced prompt, nothing else. Do not add any explanation or prefix.
+
+Prompt: ${prompt}`;
 
   const response = await client.messages.create(
     {
