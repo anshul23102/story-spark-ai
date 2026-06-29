@@ -1,0 +1,63 @@
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+[data-high-contrast="true"] {
+  background-color: #000;
+  color: #fff;
+}
+
+[data-high-contrast="true"] button,
+[data-high-contrast="true"] a {
+  color: #ffff00;
+  border: 2px solid #ffff00;
+}
+
+[data-high-contrast="true"] button:focus,
+[data-high-contrast="true"] a:focus {
+  outline: 3px solid #00ffff;
+  outline-offset: 2px;
+}
+
+[data-reduced-motion="true"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+button, a, [role="button"] {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+input, textarea, select {
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  [data-high-contrast="true"] {
+    background-color: #000;
+    color: #fff;
+  }
+}
