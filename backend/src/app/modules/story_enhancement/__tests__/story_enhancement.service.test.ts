@@ -1,18 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { StoryEnhancementService } from '../story_enhancement.service';
 
 describe('StoryEnhancementService', () => {
-  let service: StoryEnhancementService;
+  const service = new StoryEnhancementService();
   const baseStory =
     'The hero walked to the store. He was happy. It was a beautiful day.';
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [StoryEnhancementService],
-    }).compile();
-
-    service = module.get<StoryEnhancementService>(StoryEnhancementService);
-  });
 
   describe('applyStyleTransfer', () => {
     it('should convert casual to formal style', () => {

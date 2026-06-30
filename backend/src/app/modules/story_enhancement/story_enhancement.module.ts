@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { StoryEnhancementService } from './story_enhancement.service';
+import { Router } from 'express';
 import { StoryEnhancementController } from './story_enhancement.controller';
 
-@Module({
-  providers: [StoryEnhancementService],
-  controllers: [StoryEnhancementController],
-  exports: [StoryEnhancementService],
-})
-export class StoryEnhancementModule {}
+const router = Router();
+
+router.post('/style', StoryEnhancementController.applyStyleTransfer);
+router.post('/tone', StoryEnhancementController.adaptTone);
+router.post('/full', StoryEnhancementController.enhanceStory);
+
+export default router;

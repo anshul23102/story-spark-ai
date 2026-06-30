@@ -1,82 +1,71 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import { Request, Response } from 'express';
+import catchAsync from '../../../shared/catch_async';
+import ApiError from '../../../errors/api_error';
+import httpStatus from 'http-status';
 import { StoryEnhancementService } from './story_enhancement.service';
 
-@Controller('api/v1/stories/enhance')
-export class StoryEnhancementController {
-  constructor(private readonly enhancementService: StoryEnhancementService) {}
+const enhancementService = new StoryEnhancementService();
 
-  @Post('style')
-  applyStyleTransfer(
-    @Body()
-    dto: {
-      story: string;
-      style: 'formal' | 'casual' | 'poetic' | 'dark' | 'humorous';
-    },
-  ) {
-    if (!dto.story || !dto.style) {
-      throw new BadRequestException('story and style are required');
-    }
+const applyStyleTransfer = catchAsync(async (req: Request, res: Response) => {
+  const { story, style } = req.body;
 
-    const enhanced = this.enhancementService.applyStyleTransfer({
-      story: dto.story,
-      style: dto.style,
-    });
-
-    return {
-      success: true,
-      original: dto.story,
-      enhanced,
-      style: dto.style,
-    };
+  if (!story || !style) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'story and style are required');
   }
 
-  @Post('tone')
-  adaptTone(
-    @Body()
-    dto: {
-      story: string;
-      tone: 'serious' | 'lighthearted' | 'dramatic' | 'mysterious' | 'inspiring';
-    },
-  ) {
-    if (!dto.story || !dto.tone) {
-      throw new BadRequestException('story and tone are required');
-    }
+  const enhanced = enhancementService.applyStyleTransfer({
+    story,
+    style,
+  });
 
-    const enhanced = this.enhancementService.adaptTone({
-      story: dto.story,
-      tone: dto.tone,
-    });
+  res.json({
+    success: true,
+    original: story,
+    enhanced,
+    style,
+  });
+});
 
-    return {
-      success: true,
-      original: dto.story,
-      enhanced,
-      tone: dto.tone,
-    };
+const adaptTone = catchAsync(async (req: Request, res: Response) => {
+  const { story, tone } = req.body;
+
+  if (!story || !tone) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'story and tone are required');
   }
 
-  @Post('full')
-  enhanceStory(
-    @Body()
-    dto: {
-      story: string;
-      style: 'formal' | 'casual' | 'poetic' | 'dark' | 'humorous';
-      tone: 'serious' | 'lighthearted' | 'dramatic' | 'mysterious' | 'inspiring';
-    },
-  ) {
-    if (!dto.story || !dto.style || !dto.tone) {
-      throw new BadRequestException('story, style, and tone are required');
-    }
+  const enhanced = enhancementService.adaptTone({
+    story,
+    tone,
+  });
 
-    const result = this.enhancementService.enhanceStory(
-      dto.story,
-      dto.style,
-      dto.tone,
+  res.json({
+    success: true,
+    original: story,
+    enhanced,
+    tone,
+  });
+});
+
+const enhanceStory = catchAsync(async (req: Request, res: Response) => {
+  const { story, style, tone } = req.body;
+
+  if (!story || !style || !tone) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'story, style, and tone are required'
     );
-
-    return {
-      success: true,
-      ...result,
-    };
   }
-}
+
+  const result = enhancementService.enhanceStory(story, style, tone);
+
+  res.json({
+    success: true,
+    ...result,
+  });
+});
+
+export const StoryEnhancementController = {
+  applyStyleTransfer,
+  adaptTone,
+  enhanceStory,
+};

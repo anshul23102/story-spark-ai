@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-
 export interface StyleTransferRequest {
   story: string;
   style: 'formal' | 'casual' | 'poetic' | 'dark' | 'humorous';
@@ -17,13 +15,16 @@ export interface EnhancementResult {
   tone: string;
 }
 
-@Injectable()
 export class StoryEnhancementService {
   /**
    * Apply style transfer to story text
    */
   applyStyleTransfer(request: StyleTransferRequest): string {
-    const stylePatterns = {
+    const stylePatterns: Record<string, {
+      replacements?: { regex: RegExp; replacement: string }[];
+      punctuation?: (text: string) => string;
+      enhancement?: (text: string) => string;
+    }> = {
       formal: {
         replacements: [
           { regex: /\byou\b/gi, replacement: 'one' },
@@ -68,17 +69,17 @@ export class StoryEnhancementService {
     let enhanced = request.story;
     const pattern = stylePatterns[request.style];
 
-    if (pattern.replacements) {
+    if (pattern?.replacements) {
       pattern.replacements.forEach(({ regex, replacement }) => {
         enhanced = enhanced.replace(regex, replacement);
       });
     }
 
-    if (pattern.punctuation) {
+    if (pattern?.punctuation) {
       enhanced = pattern.punctuation(enhanced);
     }
 
-    if (pattern.enhancement) {
+    if (pattern?.enhancement) {
       enhanced = pattern.enhancement(enhanced);
     }
 
@@ -89,7 +90,12 @@ export class StoryEnhancementService {
    * Apply tone adaptation to story text
    */
   adaptTone(request: ToneAdaptationRequest): string {
-    const tonePatterns = {
+    const tonePatterns: Record<string, {
+      prefixes?: string[];
+      punctuation?: (text: string) => string;
+      vocabulary?: (text: string) => string;
+      enhancement?: (text: string) => string;
+    }> = {
       serious: {
         prefixes: ['Therefore, ', 'Notably, ', 'In fact, '],
         punctuation: (text: string) => text.replace(/!/g, '.'),
@@ -129,15 +135,15 @@ export class StoryEnhancementService {
     let enhanced = request.story;
     const pattern = tonePatterns[request.tone];
 
-    if (pattern.vocabulary) {
+    if (pattern?.vocabulary) {
       enhanced = pattern.vocabulary(enhanced);
     }
 
-    if (pattern.punctuation) {
+    if (pattern?.punctuation) {
       enhanced = pattern.punctuation(enhanced);
     }
 
-    if (pattern.enhancement) {
+    if (pattern?.enhancement) {
       enhanced = pattern.enhancement(enhanced);
     }
 
